@@ -65,7 +65,7 @@ namespace JetpackMan
                 Exit();
 
             // Keyboard state
-            if (Keyboard.GetState().IsKeyDown(Keys.W))
+            if (Keyboard.GetState().IsKeyDown(Keys.W)) /* Jetpack */
             {
                 player.velocity.Y += 0.6f;
             }
@@ -77,10 +77,16 @@ namespace JetpackMan
             {
                 player.position.X += 1;
             }
+            if (Keyboard.GetState().IsKeyDown(Keys.Space)) /* Jump */
+            {
+                if (player.position.Y == 0)
+                {
+                    player.velocity.Y += 10;
+                }
+            }
+
             // Gravity
             player.velocity.Y -= 0.5f;
-
-            System.Console.WriteLine("{0}", player.velocity.Y);
 
             // Velocity => Position
             player.position += player.velocity;
