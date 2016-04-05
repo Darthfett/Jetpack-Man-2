@@ -63,7 +63,22 @@ namespace JetpackMan
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-
+            if (Keyboard.GetState().IsKeyDown(Keys.W))
+            {
+                player.position.Y -= 1;
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.A))
+            {
+                player.position.X -= 1;
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.S))
+            {
+                player.position.Y += 1;
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.D))
+            {
+                player.position.X += 1;
+            }
             // TODO: Add your update logic here
 
             base.Update(gameTime);
