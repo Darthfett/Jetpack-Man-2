@@ -40,7 +40,7 @@ namespace JetpackMan
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            player = new Player(new Vector2(0, 0), Content.Load<Texture2D>("Graphics\\player"));
+            player = new Player(new Vector2(100, 500), Content.Load<Texture2D>("Graphics\\player"));
 
             // TODO: use this.Content to load your game content here
         }
@@ -63,24 +63,34 @@ namespace JetpackMan
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
+
+            // Keyboard state
             if (Keyboard.GetState().IsKeyDown(Keys.W))
             {
-                player.position.Y -= 1;
+                player.velocity.Y += 0.6f;
             }
             if (Keyboard.GetState().IsKeyDown(Keys.A))
             {
                 player.position.X -= 1;
             }
-            if (Keyboard.GetState().IsKeyDown(Keys.S))
-            {
-                player.position.Y += 1;
-            }
             if (Keyboard.GetState().IsKeyDown(Keys.D))
             {
                 player.position.X += 1;
             }
-            // TODO: Add your update logic here
+            // Gravity
+            player.velocity.Y -= 0.5f;
 
+            System.Console.WriteLine("{0}", player.velocity.Y);
+
+            // Velocity => Position
+            player.position += player.velocity;
+
+            // Collision with bottom of screen
+            if (player.position.Y < 0)
+            {
+                player.position.Y = 0;
+                player.velocity.Y = 0;
+            }
             base.Update(gameTime);
         }
 
@@ -94,8 +104,9 @@ namespace JetpackMan
 
             spriteBatch.Begin();
 
-            // TODO: Add your drawing code here
-            spriteBatch.Draw(player.texture, player.position, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+            Vector2 playerPosition = player.position;
+            playerPosition.Y = graphics.GraphicsDevice.Viewport.Height - playerPosition.Y - player.texture.Height;
+            spriteBatch.Draw(player.texture, playerPosition, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
 
             spriteBatch.End();
 
