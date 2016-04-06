@@ -4,9 +4,6 @@ using Microsoft.Xna.Framework.Input;
 
 namespace JetpackMan
 {
-    /// <summary>
-    /// This is the main type for your game.
-    /// </summary>
     public class JetpackGame : Game
     {
         GraphicsDeviceManager graphics;
@@ -27,27 +24,23 @@ namespace JetpackMan
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
+            player = new Player(new Vector2(100, 500));
 
             base.Initialize();
         }
 
         /// <summary>
-        /// LoadContent will be called once per game and is the place to load
-        /// all of your content.
+        /// LoadContent will be called once per game to load all content.
         /// </summary>
         protected override void LoadContent()
         {
-            // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            player = new Player(new Vector2(100, 500), Content.Load<Texture2D>("Graphics\\player"));
 
-            // TODO: use this.Content to load your game content here
+            player.texture = Content.Load<Texture2D>("Graphics\\player");
         }
 
         /// <summary>
-        /// UnloadContent will be called once per game and is the place to unload
-        /// game-specific content.
+        /// UnloadContent will be called once per game to unload all game-specific content.
         /// </summary>
         protected override void UnloadContent()
         {
@@ -64,39 +57,8 @@ namespace JetpackMan
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // Keyboard state
-            if (Keyboard.GetState().IsKeyDown(Keys.W)) /* Jetpack */
-            {
-                player.velocity.Y += 0.6f;
-            }
-            if (Keyboard.GetState().IsKeyDown(Keys.A))
-            {
-                player.position.X -= 1;
-            }
-            if (Keyboard.GetState().IsKeyDown(Keys.D))
-            {
-                player.position.X += 1;
-            }
-            if (Keyboard.GetState().IsKeyDown(Keys.Space)) /* Jump */
-            {
-                if (player.position.Y == 0)
-                {
-                    player.velocity.Y += 10;
-                }
-            }
+            player.Update();
 
-            // Gravity
-            player.velocity.Y -= 0.5f;
-
-            // Velocity => Position
-            player.position += player.velocity;
-
-            // Collision with bottom of screen
-            if (player.position.Y < 0)
-            {
-                player.position.Y = 0;
-                player.velocity.Y = 0;
-            }
             base.Update(gameTime);
         }
 
@@ -110,9 +72,7 @@ namespace JetpackMan
 
             spriteBatch.Begin();
 
-            Vector2 playerPosition = player.position;
-            playerPosition.Y = graphics.GraphicsDevice.Viewport.Height - playerPosition.Y - player.texture.Height;
-            spriteBatch.Draw(player.texture, playerPosition, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+            player.Draw(spriteBatch, graphics);
 
             spriteBatch.End();
 
