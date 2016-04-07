@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MonoGame.Extended;
+using MonoGame.Extended.Maps.Tiled;
 
 namespace JetpackMan
 {
@@ -9,6 +11,8 @@ namespace JetpackMan
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Player player;
+        TiledMap map;
+        Camera2D camera;
 
         public JetpackGame()
         {
@@ -34,8 +38,10 @@ namespace JetpackMan
         /// </summary>
         protected override void LoadContent()
         {
+            camera = new Camera2D(GraphicsDevice);
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            map = Content.Load<TiledMap>("Tilesets\\testmap");
             player.texture = Content.Load<Texture2D>("Graphics\\player");
         }
 
@@ -72,6 +78,7 @@ namespace JetpackMan
 
             spriteBatch.Begin();
 
+            map.Draw(camera, true);
             player.Draw(spriteBatch, graphics);
 
             spriteBatch.End();
