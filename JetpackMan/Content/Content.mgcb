@@ -9,7 +9,7 @@
 /compress:False
 
 #-------------------------------- References --------------------------------#
-
+/reference:..\..\packages\MonoGame.Extended.0.4.64\lib\MonoGame.Extedded.Content.Pipeline.dll
 
 #---------------------------------- Content ---------------------------------#
 
