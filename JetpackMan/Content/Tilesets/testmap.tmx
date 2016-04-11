@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" width="200" height="12" tilewidth="32" tileheight="32">
- <tileset firstgid="1" name="brambles" tilewidth="32" tileheight="32" spacing="1" margin="1">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="200" height="12" tilewidth="32" tileheight="32" nextobjectid="1">
+ <tileset firstgid="1" name="brambles" tilewidth="32" tileheight="32" spacing="1" margin="1" tilecount="64" columns="8">
   <image source="brambles.png" trans="ffffff" width="265" height="265"/>
  </tileset>
- <tileset firstgid="65" name="sky" tilewidth="32" tileheight="32" spacing="1" margin="1">
+ <tileset firstgid="65" name="sky" tilewidth="32" tileheight="32" spacing="1" margin="1" tilecount="64" columns="8">
   <image source="sky.png" trans="ffffff" width="265" height="265"/>
  </tileset>
- <tileset firstgid="129" name="cacti" tilewidth="32" tileheight="32" spacing="1" margin="1">
+ <tileset firstgid="129" name="cacti" tilewidth="32" tileheight="32" spacing="1" margin="1" tilecount="64" columns="8">
   <image source="cacti.png" trans="ffffff" width="265" height="265"/>
  </tileset>
- <tileset firstgid="193" name="machines" tilewidth="32" tileheight="32" spacing="1" margin="1">
+ <tileset firstgid="193" name="machines" tilewidth="32" tileheight="32" spacing="1" margin="1" tilecount="64" columns="8">
   <image source="machines.png" trans="ffffff" width="265" height="265"/>
  </tileset>
- <tileset firstgid="257" name="sand" tilewidth="32" tileheight="32" spacing="1" margin="1">
+ <tileset firstgid="257" name="sand" tilewidth="32" tileheight="32" spacing="1" margin="1" tilecount="64" columns="8">
   <image source="sand.png" trans="ffffff" width="265" height="265"/>
  </tileset>
- <tileset firstgid="321" name="warehouse" tilewidth="32" tileheight="32" spacing="1" margin="1">
+ <tileset firstgid="321" name="warehouse" tilewidth="32" tileheight="32" spacing="1" margin="1" tilecount="64" columns="8">
   <image source="warehouse.png" trans="ffffff" width="265" height="265"/>
  </tileset>
- <layer name="Sky" width="200" height="12">
+ <layer name="BG" width="200" height="12">
   <data encoding="base64" compression="zlib">
    eJztw7EJAEAIBLBbzfJL91/GCWwfhARSSUpVVVVV1XOfum5VVdVPBzommb8=
   </data>
@@ -35,20 +35,20 @@
  </layer>
  <layer name="warehouse" width="200" height="12">
   <data encoding="base64" compression="zlib">
-   eJzt1bENgDAMRFF7NNKFjv2XgSblpaTJe5J1E1i/CgAAgOXqqtF54WTz+4G788LJ9AMy/YBMPyDTD8ie3h8A/3sBRBEPyQ==
+   eJzt0yESgDAMAMH0aeCKA8f/P0JNZSIx2Z25J1wEAAAA2zEiziLobK4HriLozB+Q8wfk/AG5ez3wFEFn76gD4H8fc30Q2w==
   </data>
  </layer>
- <layer name="Cacti1" width="200" height="12">
+ <layer name="FG1" width="200" height="12">
   <data encoding="base64" compression="zlib">
-   eJzt1TEKgDAMBdDamxe9mJ5MBYUOFmtRUHwPSjL8IUNCQwAAAAAAAOCqqTLTb/3w4CzQKlVkWnZ3vCkDb7Ley9k9pEKf23e/W17MajzIwN/4P/iqGcGGCiY=
+   eJzt1UsKgDAMBcDam4tezM/BVFAooliLunEGSrN4iywSEgIAAAAAAAB39ZmZZq3bjPxY3g4UqTMyObO71z2USQ0FfcCTln252of6pE5ts1/NLyZ/PMjA37xxP+ALE1+OC60=
   </data>
  </layer>
- <layer name="Cacti2" width="200" height="12">
+ <layer name="FG2" width="200" height="12">
   <data encoding="base64" compression="zlib">
    eJztzjEKACAMBMHo0/XjIqSzsQkizMB1V2wEAAAAAAAAwGm+DoCPjYtPz22tsAWAWgv+aQEL
   </data>
  </layer>
- <layer name="Brambles" width="200" height="12">
+ <layer name="FG3" width="200" height="12">
   <data encoding="base64" compression="zlib">
    eJztzrEJADAMA0FBvP/Mdpk+4DR38KhVAgAAAAAAAABsOlNdW3/vAPCgAY3QABM=
   </data>
