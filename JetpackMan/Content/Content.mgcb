@@ -10,7 +10,7 @@
 
 #-------------------------------- References --------------------------------#
 
-/reference:..\..\packages\MonoGame.Extended.0.4.64\lib\MonoGame.Extended.Content.Pipeline.dll
+/reference:..\..\packages\MonoGame.Extended.0.5.149\lib\MonoGame.Extended.Content.Pipeline.dll
 
 #---------------------------------- Content ---------------------------------#
 
@@ -25,11 +25,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Graphics/player.png
-
-#begin Tilesets/testmap.tmx
-/importer:TiledMapImporter
-/processor:TiledMapProcessor
-/build:Tilesets/testmap.tmx
 
 #begin Tilesets/brambles.png
 /importer:TextureImporter
@@ -102,4 +97,9 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Tilesets/warehouse.png
+
+#begin Tilesets/testmap.tmx
+/importer:
+/processor:
+/build:Tilesets/testmap.tmx
 
