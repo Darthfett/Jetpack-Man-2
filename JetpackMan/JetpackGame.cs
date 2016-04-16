@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
 using MonoGame.Extended.Maps.Tiled;
+using MonoGame.Extended.Shapes;
 
 namespace JetpackMan
 {
@@ -28,7 +29,7 @@ namespace JetpackMan
         /// </summary>
         protected override void Initialize()
         {
-            player = new Player(new Vector2(100, 500));
+            player = new Player(new Vector2(0, 500));
 
             base.Initialize();
         }
@@ -43,6 +44,8 @@ namespace JetpackMan
 
             map = Content.Load<TiledMap>("Tilesets\\testmap");
             player.texture = Content.Load<Texture2D>("Graphics\\player");
+
+            camera.LookAt(player.BoundingRect.Center);
         }
 
         /// <summary>
@@ -51,6 +54,41 @@ namespace JetpackMan
         protected override void UnloadContent()
         {
             // TODO: Unload any non ContentManager content here
+        }
+
+        protected void UpdateCamera(Viewport viewport)
+        {
+
+            camera.LookAt(player.BoundingRect.Center);
+
+            /*** Failed attempt at scrolling camera:
+
+            RectangleF camRect = camera.GetBoundingRectangle();
+            Vector2 viewportSize = viewport.Bounds.Size.ToVector2();
+            RectangleF scrollBounds = new RectangleF(camRect.Center, 0.5f * viewportSize);
+
+            if (player.BoundingRect.Right > scrollBounds.Right)
+            {
+                System.Console.WriteLine("Intersect Right");
+                camera.Move(new Vector2(scrollBounds.Right - player.BoundingRect.Right, 0));
+            }
+            else if (player.BoundingRect.Left < scrollBounds.Left)
+            {
+                System.Console.WriteLine("Intersect Left");
+                camera.Move(new Vector2(scrollBounds.Left - player.BoundingRect.Left, 0));
+            }
+            if (player.BoundingRect.Bottom > scrollBounds.Bottom)
+            {
+                System.Console.WriteLine("Intersect Bottom");
+                camera.Move(new Vector2(0, scrollBounds.Bottom - player.BoundingRect.Bottom));
+            }
+            else if (player.BoundingRect.Top < scrollBounds.Top)
+            {
+                System.Console.WriteLine("Intersect Top");
+                camera.Move(new Vector2(0, scrollBounds.Top - player.BoundingRect.Top));
+            }
+
+            ***/
         }
 
         /// <summary>
@@ -63,7 +101,9 @@ namespace JetpackMan
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            player.Update();
+            player.Update(graphics.GraphicsDevice.Viewport);
+
+            UpdateCamera(graphics.GraphicsDevice.Viewport);
 
             base.Update(gameTime);
         }
@@ -76,11 +116,9 @@ namespace JetpackMan
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            spriteBatch.Begin();
-
-            map.Draw(camera, true);
-            player.Draw(spriteBatch, graphics);
-
+            spriteBatch.Begin(transformMatrix: camera.GetViewMatrix());
+                map.Draw(spriteBatch);
+                player.Draw(spriteBatch);
             spriteBatch.End();
 
             base.Draw(gameTime);

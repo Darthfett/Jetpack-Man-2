@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MonoGame.Extended;
+using MonoGame.Extended.Shapes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,32 +24,36 @@ namespace JetpackMan
             this.texture = null;
         }
 
-        public Vector2 GetScreenPosition(Viewport viewport)
+        public RectangleF BoundingRect
         {
-            return new Vector2(this.position.X, viewport.Height - this.position.Y - this.texture.Height);
+            get
+            {
+                RectangleF bounds = new RectangleF(position, texture.Bounds.Size.ToVector2());
+                return bounds;
+            }
         }
 
-        public void Draw(SpriteBatch spriteBatch, GraphicsDeviceManager graphics)
+        public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(this.texture, this.GetScreenPosition(graphics.GraphicsDevice.Viewport), null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+            spriteBatch.Draw(this.texture, this.position, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
         }
 
-        public void CheckForCollision()
+        public void CheckForCollision(Viewport viewport)
         {
             // Collision with bottom of screen
-            if (this.position.Y < 0)
+            if (this.BoundingRect.Bottom > viewport.Height)
             {
-                this.position.Y = 0;
+                this.position.Y = viewport.Height - texture.Height;
                 this.velocity.Y = 0;
             }
         }
 
-        public void Update()
+        public void Update(Viewport viewport)
         {
             // Keyboard state
             if (Keyboard.GetState().IsKeyDown(Keys.W)) /* Jetpack */
             {
-                this.velocity.Y += 0.6f;
+                this.velocity.Y -= 0.6f;
             }
             if (Keyboard.GetState().IsKeyDown(Keys.A))
             {
@@ -59,19 +65,19 @@ namespace JetpackMan
             }
             if (Keyboard.GetState().IsKeyDown(Keys.Space)) /* Jump */
             {
-                if (this.position.Y == 0)
+                if (this.BoundingRect.Bottom == viewport.Height)
                 {
-                    this.velocity.Y += 10;
+                    this.velocity.Y -= 10;
                 }
             }
 
             // Gravity
-            this.velocity.Y -= 0.5f;
+            this.velocity.Y += 0.5f;
 
             // Apply velocity to position
             this.position += this.velocity;
 
-            CheckForCollision();
+            CheckForCollision(viewport);
         }
     }
 }
