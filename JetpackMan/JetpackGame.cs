@@ -31,6 +31,10 @@ namespace JetpackMan
         {
             player = new Player(new Vector2(0, 500));
 
+            graphics.PreferredBackBufferWidth = 1280;
+            graphics.PreferredBackBufferHeight = 800;
+            graphics.ApplyChanges();
+
             base.Initialize();
         }
 
@@ -45,6 +49,7 @@ namespace JetpackMan
             map = Content.Load<TiledMap>("Tilesets\\testmap");
             player.texture = Content.Load<Texture2D>("Graphics\\player");
 
+            camera.ZoomIn(4);
             camera.LookAt(player.BoundingRect.Center);
         }
 
@@ -116,7 +121,7 @@ namespace JetpackMan
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            spriteBatch.Begin(transformMatrix: camera.GetViewMatrix());
+            spriteBatch.Begin(transformMatrix: camera.GetViewMatrix(), samplerState: SamplerState.PointClamp);
                 map.Draw(spriteBatch);
                 player.Draw(spriteBatch);
             spriteBatch.End();
