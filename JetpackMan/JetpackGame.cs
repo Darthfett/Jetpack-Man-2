@@ -49,7 +49,10 @@ namespace JetpackMan
             map = Content.Load<TiledMap>("Tilesets\\testmap");
             player.texture = Content.Load<Texture2D>("Graphics\\player");
 
-            camera.ZoomIn(4);
+            player.position.X = 256;
+            player.position.Y = map.HeightInPixels;
+
+            camera.ZoomIn(2);
             camera.LookAt(player.BoundingRect.Center);
         }
 
@@ -106,7 +109,7 @@ namespace JetpackMan
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            player.Update(graphics.GraphicsDevice.Viewport);
+            player.Update(map);
 
             UpdateCamera(graphics.GraphicsDevice.Viewport);
 
