@@ -9,11 +9,14 @@ namespace JetpackMan
 {
     public class JetpackGame : Game
     {
+        static int WINDOW_WIDTH = 1280;
+        static int WINDOW_HEIGHT = 800;
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Player player;
         TiledMap map;
         Camera2D camera;
+        RectangleF cameraTarget;
 
         public JetpackGame()
         {
@@ -31,8 +34,8 @@ namespace JetpackMan
         {
             player = new Player(new Vector2(0, 500));
 
-            graphics.PreferredBackBufferWidth = 1280;
-            graphics.PreferredBackBufferHeight = 800;
+            graphics.PreferredBackBufferWidth = WINDOW_WIDTH;
+            graphics.PreferredBackBufferHeight = WINDOW_HEIGHT;
             graphics.ApplyChanges();
 
             base.Initialize();
@@ -52,8 +55,11 @@ namespace JetpackMan
             player.position.X = 256;
             player.position.Y = map.HeightInPixels;
 
-            camera.ZoomIn(2);
-            camera.LookAt(player.BoundingRect.Center);
+            camera.ZoomIn(2f);
+            cameraTarget = new RectangleF(player.position.X - (cameraTarget.Width / 2),
+                                          player.position.Y - (cameraTarget.Height / 2),
+                                          0.1f * WINDOW_WIDTH, 0.1f * WINDOW_HEIGHT); // TODO: figure out why it's 0.1f
+            camera.LookAt(cameraTarget.Center);
         }
 
         /// <summary>
@@ -66,37 +72,27 @@ namespace JetpackMan
 
         protected void UpdateCamera(Viewport viewport)
         {
-
-            camera.LookAt(player.BoundingRect.Center);
-
-            /*** Failed attempt at scrolling camera:
-
-            RectangleF camRect = camera.GetBoundingRectangle();
-            Vector2 viewportSize = viewport.Bounds.Size.ToVector2();
-            RectangleF scrollBounds = new RectangleF(camRect.Center, 0.5f * viewportSize);
-
-            if (player.BoundingRect.Right > scrollBounds.Right)
+            if (player.BoundingRect.Left < cameraTarget.Left)
             {
-                System.Console.WriteLine("Intersect Right");
-                camera.Move(new Vector2(scrollBounds.Right - player.BoundingRect.Right, 0));
-            }
-            else if (player.BoundingRect.Left < scrollBounds.Left)
-            {
-                System.Console.WriteLine("Intersect Left");
-                camera.Move(new Vector2(scrollBounds.Left - player.BoundingRect.Left, 0));
-            }
-            if (player.BoundingRect.Bottom > scrollBounds.Bottom)
-            {
-                System.Console.WriteLine("Intersect Bottom");
-                camera.Move(new Vector2(0, scrollBounds.Bottom - player.BoundingRect.Bottom));
-            }
-            else if (player.BoundingRect.Top < scrollBounds.Top)
-            {
-                System.Console.WriteLine("Intersect Top");
-                camera.Move(new Vector2(0, scrollBounds.Top - player.BoundingRect.Top));
+                cameraTarget.X = player.BoundingRect.Left;
             }
 
-            ***/
+            if (player.BoundingRect.Right > cameraTarget.Right)
+            {
+                cameraTarget.X += player.BoundingRect.Right - cameraTarget.Right;
+            }
+
+            if (player.BoundingRect.Bottom > cameraTarget.Bottom)
+            {
+                cameraTarget.Y += player.BoundingRect.Bottom - cameraTarget.Bottom;
+            }
+
+            if (player.BoundingRect.Top < cameraTarget.Top)
+            {
+                cameraTarget.Y = player.BoundingRect.Top;
+            }
+            
+            camera.LookAt(cameraTarget.Center);
         }
 
         /// <summary>
