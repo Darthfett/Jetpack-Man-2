@@ -73,6 +73,36 @@ namespace JetpackMan
                 this.position.X = map.WidthInPixels - texture.Width;
                 this.velocity.X = 0;
             }
+
+            // Check for collision using collision layer
+            foreach (var layer in map.TileLayers)
+            {
+                if (!layer.Name.Equals("Collision"))
+                {
+                    continue;
+                }
+                foreach (var tile in layer.Tiles)
+                {
+                    if (
+                        ((tile.X * 32) > this.BoundingRect.Right) ||
+                        ((tile.Y * 32) > this.BoundingRect.Bottom) ||
+                        (((tile.X * 32) + 32) < this.BoundingRect.Left) ||
+                        (((tile.Y * 32) + 32) < this.BoundingRect.Top)
+                       )
+                    {
+                        continue;
+                    }
+
+
+                    var region = map.GetTileRegion(tile.Id);
+                    if (region != null && region.Texture.Name == "Tilesets/collision"
+                        && (region.X + region.Y == 35))
+                    {
+                        this.position.Y = (tile.Y * 32) - this.BoundingRect.Height;
+                        this.velocity.Y = 0;
+                    }
+                }
+            }
         }
 
         public void Update(TiledMap map)
@@ -119,18 +149,6 @@ namespace JetpackMan
                     this.velocity.Y -= JumpSpeed;
                 }
             }
-
-            // foreach (var layer in map.TileLayers)
-            // {
-            //     foreach (var tile in layer.Tiles)
-            //     {
-            //         var region = map.GetTileRegion(tile.Id);
-            //         if (region != null && region.Texture.Name == "Tilesets/cacti")
-            //         {
-            //             Console.WriteLine(region.Texture);
-            //         }
-            //     }
-            // }
 
             // Gravity
             this.velocity.Y += GravityAccel;
