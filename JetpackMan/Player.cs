@@ -14,9 +14,17 @@ namespace JetpackMan
 {
     class Player
     {
+        const float WalkingSpeed = 1.5f;
+        const float JumpSpeed = 5f;
+        const float GravityAccel = 0.25f;
+        const float JetpackAccel = 0.30f;
+        const int MaxJetpackFuelFrames = 90;
+
         public Vector2 position;
         public Vector2 velocity;
         public Texture2D texture;
+
+        private int JetpackFuelCtr = MaxJetpackFuelFrames;
 
         public Player(Vector2 position)
         {
@@ -72,27 +80,60 @@ namespace JetpackMan
             // Keyboard state
             if (Keyboard.GetState().IsKeyDown(Keys.W)) /* Jetpack */
             {
-                this.velocity.Y -= 0.6f;
+                if (JetpackFuelCtr <= 0)
+                {
+                    this.velocity.Y -= (GravityAccel / 2f);
+                    JetpackFuelCtr = 0;
+                }
+                else
+                {
+                    this.velocity.Y -= JetpackAccel;
+                    JetpackFuelCtr -= 1;
+                }
             }
+            else
+            {
+                if (JetpackFuelCtr >= MaxJetpackFuelFrames)
+                {
+                    JetpackFuelCtr = MaxJetpackFuelFrames;
+                }
+                else
+                {
+                    JetpackFuelCtr += 1;
+                }
+            }
+
             if (Keyboard.GetState().IsKeyDown(Keys.A))
             {
-                this.position.X -= 2;
+                this.position.X -= WalkingSpeed;
             }
             if (Keyboard.GetState().IsKeyDown(Keys.D))
             {
-                this.position.X += 2;
+                this.position.X += WalkingSpeed;
             }
             if (Keyboard.GetState().IsKeyDown(Keys.Space)) /* Jump */
             {
                 
                 if (this.BoundingRect.Bottom == map.HeightInPixels)
                 {
-                    this.velocity.Y -= 10;
+                    this.velocity.Y -= JumpSpeed;
                 }
             }
 
+            // foreach (var layer in map.TileLayers)
+            // {
+            //     foreach (var tile in layer.Tiles)
+            //     {
+            //         var region = map.GetTileRegion(tile.Id);
+            //         if (region != null && region.Texture.Name == "Tilesets/cacti")
+            //         {
+            //             Console.WriteLine(region.Texture);
+            //         }
+            //     }
+            // }
+
             // Gravity
-            this.velocity.Y += 0.5f;
+            this.velocity.Y += GravityAccel;
 
             // Apply velocity to position
             this.position += this.velocity;
