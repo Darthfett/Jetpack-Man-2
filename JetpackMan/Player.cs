@@ -77,34 +77,29 @@ namespace JetpackMan
                 this.velocity.X = 0;
             }
 
+
             // Check for collision using collision layer
-            foreach (var layer in map.TileLayers)
+            TiledTileLayer layer = (TiledTileLayer) map.GetLayer("Collision");
+            foreach (var tile in layer.Tiles)
             {
-                if (!layer.Name.Equals("Collision"))
+                if (
+                    ((tile.X * 32) > this.BoundingRect.Right) ||
+                    ((tile.Y * 32) > this.BoundingRect.Bottom) ||
+                    (((tile.X * 32) + 32) < this.BoundingRect.Left) ||
+                    (((tile.Y * 32) + 32) < this.BoundingRect.Top)
+                    )
                 {
                     continue;
                 }
-                foreach (var tile in layer.Tiles)
+
+
+                var region = map.GetTileRegion(tile.Id);
+                if (region != null && region.Texture.Name == "Tilesets/collision"
+                    && (region.X + region.Y == 35))
                 {
-                    if (
-                        ((tile.X * 32) > this.BoundingRect.Right) ||
-                        ((tile.Y * 32) > this.BoundingRect.Bottom) ||
-                        (((tile.X * 32) + 32) < this.BoundingRect.Left) ||
-                        (((tile.Y * 32) + 32) < this.BoundingRect.Top)
-                       )
-                    {
-                        continue;
-                    }
-
-
-                    var region = map.GetTileRegion(tile.Id);
-                    if (region != null && region.Texture.Name == "Tilesets/collision"
-                        && (region.X + region.Y == 35))
-                    {
-                        this.position.Y = (tile.Y * 32) - this.BoundingRect.Height;
-                        this.velocity.Y = 0;
-                        onGround = true;
-                    }
+                    this.position.Y = (tile.Y * 32) - this.BoundingRect.Height;
+                    this.velocity.Y = 0;
+                    onGround = true;
                 }
             }
         }
