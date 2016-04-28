@@ -23,6 +23,7 @@ namespace JetpackMan
         public Vector2 position;
         public Vector2 velocity;
         public Texture2D texture;
+        public bool onGround;
 
         private int JetpackFuelCtr = MaxJetpackFuelFrames;
 
@@ -31,6 +32,7 @@ namespace JetpackMan
             this.position = position;
             this.velocity = new Vector2(0, 0);
             this.texture = null;
+            this.onGround = false;
         }
 
         public RectangleF BoundingRect
@@ -54,6 +56,7 @@ namespace JetpackMan
             {
                 this.position.Y = map.HeightInPixels - texture.Height;
                 this.velocity.Y = 0;
+                onGround = true;
             }
             // Collision with top of map
             if (this.BoundingRect.Top < 0)
@@ -100,6 +103,7 @@ namespace JetpackMan
                     {
                         this.position.Y = (tile.Y * 32) - this.BoundingRect.Height;
                         this.velocity.Y = 0;
+                        onGround = true;
                     }
                 }
             }
@@ -107,9 +111,33 @@ namespace JetpackMan
 
         public void Update(TiledMap map)
         {
-            // Keyboard state
-            if (Keyboard.GetState().IsKeyDown(Keys.W)) /* Jetpack */
+            // Left
+            if (Keyboard.GetState().IsKeyDown(Keys.A))
             {
+                this.position.X -= WalkingSpeed;
+            }
+
+            // Right
+            if (Keyboard.GetState().IsKeyDown(Keys.D))
+            {
+                this.position.X += WalkingSpeed;
+            }
+
+            // Jump
+            if (Keyboard.GetState().IsKeyDown(Keys.Space))
+            {
+                
+                if (onGround)
+                {
+                    onGround = false;
+                    this.velocity.Y -= JumpSpeed;
+                }
+            }
+
+            // Jetpack
+            if (Keyboard.GetState().IsKeyDown(Keys.W))
+            {
+                onGround = false;
                 if (JetpackFuelCtr <= 0)
                 {
                     this.velocity.Y -= (GravityAccel / 2f);
@@ -130,23 +158,6 @@ namespace JetpackMan
                 else
                 {
                     JetpackFuelCtr += 1;
-                }
-            }
-
-            if (Keyboard.GetState().IsKeyDown(Keys.A))
-            {
-                this.position.X -= WalkingSpeed;
-            }
-            if (Keyboard.GetState().IsKeyDown(Keys.D))
-            {
-                this.position.X += WalkingSpeed;
-            }
-            if (Keyboard.GetState().IsKeyDown(Keys.Space)) /* Jump */
-            {
-                
-                if (this.BoundingRect.Bottom == map.HeightInPixels)
-                {
-                    this.velocity.Y -= JumpSpeed;
                 }
             }
 
