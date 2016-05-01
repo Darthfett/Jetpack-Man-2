@@ -7,6 +7,7 @@ using MonoGame.Extended.Shapes;
 
 namespace JetpackMan
 {
+    
     public class JetpackGame : Game
     {
         static int WindowWidth = 1280;
@@ -36,9 +37,8 @@ namespace JetpackMan
         /// </summary>
         protected override void Initialize()
         {
-            player = new Player(new Vector2(0, 500));
 
-            jetpackFuelBar = new ProgressBar(new RectangleF(WindowWidth - 100, 20, 80, 12), Color.DarkOliveGreen, Color.Gold, ProgressFillDirection.LeftToRight);
+            jetpackFuelBar = new ProgressBar(new Rectangle(WindowWidth - 100, 20, 80, 12), Color.DarkOliveGreen, Color.Gold, ProgressBarFillDirection.LeftToRight);
 
             graphics.PreferredBackBufferWidth = WindowWidth;
             graphics.PreferredBackBufferHeight = WindowHeight;
@@ -57,10 +57,9 @@ namespace JetpackMan
             uiSpriteBatch = new SpriteBatch(GraphicsDevice);
 
             map = Content.Load<TiledMap>("Tilesets\\testmap");
-            player.texture = Content.Load<Texture2D>("Graphics\\player");
 
-            player.position.X = 256;
-            player.position.Y = map.HeightInPixels;
+            player = new Player(new Vector2(256, map.HeightInPixels), Content.Load<Texture2D>("Graphics\\player"));
+            EntityManager.AddEntity(player);
 
             camera.ZoomIn(2f);
             cameraTarget = new RectangleF(player.position.X - (cameraTarget.Width / 2),
@@ -72,11 +71,16 @@ namespace JetpackMan
         /// <summary>
         /// UnloadContent will be called once per game to unload all game-specific content.
         /// </summary>
-        protected override void UnloadContent()
+        protected override void UnloadContent() { }
+
+        void UpdateEntities()
         {
+
+            player.Update(map);
+
         }
 
-        protected void UpdateCamera(Viewport viewport)
+        void UpdateCamera()
         {
             if (player.BoundingRect.Left < cameraTarget.Left)
             {
@@ -101,20 +105,20 @@ namespace JetpackMan
             camera.LookAt(cameraTarget.Center);
         }
 
-        /// <summary>
-        /// Allows the game to run logic such as updating the world,
-        /// checking for collisions, gathering input, and playing audio.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
+        void UpdateUI()
+        {
+            jetpackFuelBar.progress = ((float)player.JetpackFuelCtr) / Player.MaxJetpackFuelFrames;
+        }
+
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            player.Update(map);
-            jetpackFuelBar.progress = (float) player.JetpackFuelCtr / Player.MaxJetpackFuelFrames;
+            UpdateEntities();
 
-            UpdateCamera(graphics.GraphicsDevice.Viewport);
+            UpdateUI();
+            UpdateCamera();
 
             base.Update(gameTime);
         }

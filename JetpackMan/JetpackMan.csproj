@@ -38,10 +38,14 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Player.cs" />
+    <Compile Include="Entities\EntityManager.cs" />
+    <Compile Include="IDrawable.cs" />
+    <Compile Include="Entities\IEntity.cs" />
+    <Compile Include="Entities\Player.cs" />
     <Compile Include="JetpackGame.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="ProgressBar.cs" />
+    <Compile Include="UI\ProgressBar.cs" />
+    <Compile Include="Entities\Projectile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

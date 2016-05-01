@@ -12,28 +12,20 @@ using System.Threading.Tasks;
 
 namespace JetpackMan
 {
-    class Player
+    class Player : IDrawable, IEntity
     {
-        public const float WalkingSpeed = 1.5f;
-        public const float JumpSpeed = 5f;
-        public const float GravityAccel = 0.25f;
-        public const float JetpackAccel = 0.30f;
+        const float WalkingSpeed = 1.5f;
+        const float JumpSpeed = 5f;
+        const float GravityAccel = 0.25f;
+        const float JetpackAccel = 0.30f;
         public const int MaxJetpackFuelFrames = 90;
 
         public Vector2 position;
         public Vector2 velocity;
-        public Texture2D texture;
+        Texture2D texture;
         public bool onGround;
 
         public int JetpackFuelCtr { get; private set; } = MaxJetpackFuelFrames;
-
-        public Player(Vector2 position)
-        {
-            this.position = position;
-            this.velocity = new Vector2(0, 0);
-            this.texture = null;
-            this.onGround = false;
-        }
 
         public RectangleF BoundingRect
         {
@@ -44,37 +36,50 @@ namespace JetpackMan
             }
         }
 
+        public Player(Vector2 position, Texture2D texture)
+        {
+            this.position = position;
+            this.texture = texture;
+            this.velocity = new Vector2(0, 0);
+            this.onGround = false;
+        }
+
+        public bool IsDestroyed()
+        {
+            return false;
+        }
+
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(this.texture, this.position, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+            spriteBatch.Draw(texture, position, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
         }
 
         public void CheckForCollision(TiledMap map)
         {
             // Collision with bottom of map
-            if (this.BoundingRect.Bottom > map.HeightInPixels)
+            if (BoundingRect.Bottom > map.HeightInPixels)
             {
-                this.position.Y = map.HeightInPixels - texture.Height;
-                this.velocity.Y = 0;
+                position.Y = map.HeightInPixels - texture.Height;
+                velocity.Y = 0;
                 onGround = true;
             }
             // Collision with top of map
-            if (this.BoundingRect.Top < 0)
+            if (BoundingRect.Top < 0)
             {
-                this.position.Y = 0;
-                this.velocity.Y = 0;
+                position.Y = 0;
+                velocity.Y = 0;
             }
             // Collision with top of map
-            if (this.BoundingRect.Left < 0)
+            if (BoundingRect.Left < 0)
             {
-                this.position.X = 0;
-                this.velocity.X = 0;
+                position.X = 0;
+                velocity.X = 0;
             }
             // Collision with top of map
-            if (this.BoundingRect.Right > map.WidthInPixels)
+            if (BoundingRect.Right > map.WidthInPixels)
             {
-                this.position.X = map.WidthInPixels - texture.Width;
-                this.velocity.X = 0;
+                position.X = map.WidthInPixels - texture.Width;
+                velocity.X = 0;
             }
 
 
@@ -83,10 +88,10 @@ namespace JetpackMan
             foreach (var tile in layer.Tiles)
             {
                 if (
-                    ((tile.X * 32) > this.BoundingRect.Right) ||
-                    ((tile.Y * 32) > this.BoundingRect.Bottom) ||
-                    (((tile.X * 32) + 32) < this.BoundingRect.Left) ||
-                    (((tile.Y * 32) + 32) < this.BoundingRect.Top)
+                    ((tile.X * 32) > BoundingRect.Right) ||
+                    ((tile.Y * 32) > BoundingRect.Bottom) ||
+                    (((tile.X * 32) + 32) < BoundingRect.Left) ||
+                    (((tile.Y * 32) + 32) < BoundingRect.Top)
                     )
                 {
                     continue;
@@ -97,8 +102,8 @@ namespace JetpackMan
                 if (region != null && region.Texture.Name == "Tilesets/collision"
                     && (region.X + region.Y == 35))
                 {
-                    this.position.Y = (tile.Y * 32) - this.BoundingRect.Height;
-                    this.velocity.Y = 0;
+                    position.Y = (tile.Y * 32) - BoundingRect.Height;
+                    velocity.Y = 0;
                     onGround = true;
                 }
             }
@@ -109,13 +114,13 @@ namespace JetpackMan
             // Left
             if (Keyboard.GetState().IsKeyDown(Keys.A))
             {
-                this.position.X -= WalkingSpeed;
+                position.X -= WalkingSpeed;
             }
 
             // Right
             if (Keyboard.GetState().IsKeyDown(Keys.D))
             {
-                this.position.X += WalkingSpeed;
+                position.X += WalkingSpeed;
             }
 
             // Jump
@@ -125,7 +130,7 @@ namespace JetpackMan
                 if (onGround)
                 {
                     onGround = false;
-                    this.velocity.Y -= JumpSpeed;
+                    velocity.Y -= JumpSpeed;
                 }
             }
 
@@ -135,12 +140,12 @@ namespace JetpackMan
                 onGround = false;
                 if (JetpackFuelCtr <= 0)
                 {
-                    this.velocity.Y -= (GravityAccel / 2f);
+                    velocity.Y -= (GravityAccel / 2f);
                     JetpackFuelCtr = 0;
                 }
                 else
                 {
-                    this.velocity.Y -= JetpackAccel;
+                    velocity.Y -= JetpackAccel;
                     JetpackFuelCtr -= 1;
                 }
             }
@@ -157,10 +162,10 @@ namespace JetpackMan
             }
 
             // Gravity
-            this.velocity.Y += GravityAccel;
+            velocity.Y += GravityAccel;
 
             // Apply velocity to position
-            this.position += this.velocity;
+            position += velocity;
 
             CheckForCollision(map);
         }

@@ -9,7 +9,7 @@ using MonoGame.Extended.Shapes;
 
 namespace JetpackMan
 {
-    enum ProgressFillDirection
+    enum ProgressBarFillDirection
     {
         LeftToRight,
         RightToLeft,
@@ -17,12 +17,12 @@ namespace JetpackMan
         TopToBottom
     };
 
-    class ProgressBar
+    class ProgressBar : IDrawable
     {
-        public RectangleF rectangle;
+        public Rectangle rectangle;
         public Color bgColor;
         public Color progressColor;
-        public ProgressFillDirection fillDirection;
+        public ProgressBarFillDirection fillDirection;
 
         float _progress;
         public float progress {
@@ -37,9 +37,9 @@ namespace JetpackMan
             }
         }
 
-        public ProgressBar(RectangleF rectangle, Color bgColor, Color progressColor, ProgressFillDirection fillDirection, float progress = 0)
+        public ProgressBar(Rectangle rectangle, Color bgColor, Color progressColor, ProgressBarFillDirection fillDirection, float progress = 0)
         {
-            this.rectangle = new RectangleF(rectangle.Location, rectangle.Size);
+            this.rectangle = new Rectangle(rectangle.Location, rectangle.Size);
             this.bgColor = bgColor;
             this.progressColor = progressColor;
             this.fillDirection = fillDirection;
@@ -50,28 +50,28 @@ namespace JetpackMan
         {
             spriteBatch.FillRectangle(rectangle, bgColor);
 
-            Vector2 location = rectangle.Location;
-            Vector2 size = rectangle.Size;
+            Point location = rectangle.Location;
+            Point size = rectangle.Size;
             switch (fillDirection)
             {
-                case ProgressFillDirection.LeftToRight:
-                    size.X = progress * rectangle.Width;
+                case ProgressBarFillDirection.LeftToRight:
+                    size.X = (int)(progress * rectangle.Width);
                     break;
-                case ProgressFillDirection.TopToBottom:
-                    size.Y = progress * rectangle.Height;
+                case ProgressBarFillDirection.TopToBottom:
+                    size.Y = (int)(progress * rectangle.Height);
                     break;
-                case ProgressFillDirection.RightToLeft:
-                    size.X = progress * rectangle.Width;
+                case ProgressBarFillDirection.RightToLeft:
+                    size.X = (int)(progress * rectangle.Width);
                     location.X = rectangle.Right - size.X;
                     break;
-                case ProgressFillDirection.BottomToTop:
-                    size.Y = progress * rectangle.Height;
+                case ProgressBarFillDirection.BottomToTop:
+                    size.Y = (int) (progress * rectangle.Height);
                     location.Y = rectangle.Bottom - size.Y;
                     break;
                 default:
                     throw new NotImplementedException();
             }
-            spriteBatch.FillRectangle(new RectangleF(location, size), progressColor);
+            spriteBatch.FillRectangle(new Rectangle(location, size), progressColor);
         }
     }
 }
