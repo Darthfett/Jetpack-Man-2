@@ -9,14 +9,18 @@ namespace JetpackMan
 {
     public class JetpackGame : Game
     {
-        static int WINDOW_WIDTH = 1280;
-        static int WINDOW_HEIGHT = 800;
+        static int WindowWidth = 1280;
+        static int WindowHeight = 800;
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        SpriteBatch uiSpriteBatch;
+
         Player player;
         TiledMap map;
         Camera2D camera;
         RectangleF cameraTarget;
+        
+        ProgressBar jetpackFuelBar;
 
         public JetpackGame()
         {
@@ -34,8 +38,10 @@ namespace JetpackMan
         {
             player = new Player(new Vector2(0, 500));
 
-            graphics.PreferredBackBufferWidth = WINDOW_WIDTH;
-            graphics.PreferredBackBufferHeight = WINDOW_HEIGHT;
+            jetpackFuelBar = new ProgressBar(new RectangleF(WindowWidth - 100, 20, 80, 12), Color.DarkOliveGreen, Color.Gold, ProgressFillDirection.LeftToRight);
+
+            graphics.PreferredBackBufferWidth = WindowWidth;
+            graphics.PreferredBackBufferHeight = WindowHeight;
             graphics.ApplyChanges();
 
             base.Initialize();
@@ -48,6 +54,7 @@ namespace JetpackMan
         {
             camera = new Camera2D(GraphicsDevice);
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            uiSpriteBatch = new SpriteBatch(GraphicsDevice);
 
             map = Content.Load<TiledMap>("Tilesets\\testmap");
             player.texture = Content.Load<Texture2D>("Graphics\\player");
@@ -58,7 +65,7 @@ namespace JetpackMan
             camera.ZoomIn(2f);
             cameraTarget = new RectangleF(player.position.X - (cameraTarget.Width / 2),
                                           player.position.Y - (cameraTarget.Height / 2),
-                                          0.1f * WINDOW_WIDTH, 0.1f * WINDOW_HEIGHT); // TODO: figure out why it's 0.1f
+                                          0.1f * WindowWidth, 0.1f * WindowHeight); // TODO: figure out why it's 0.1f
             camera.LookAt(cameraTarget.Center);
         }
 
@@ -67,7 +74,6 @@ namespace JetpackMan
         /// </summary>
         protected override void UnloadContent()
         {
-            // TODO: Unload any non ContentManager content here
         }
 
         protected void UpdateCamera(Viewport viewport)
@@ -106,6 +112,7 @@ namespace JetpackMan
                 Exit();
 
             player.Update(map);
+            jetpackFuelBar.progress = (float) player.JetpackFuelCtr / Player.MaxJetpackFuelFrames;
 
             UpdateCamera(graphics.GraphicsDevice.Viewport);
 
@@ -124,6 +131,10 @@ namespace JetpackMan
                 map.Draw(spriteBatch);
                 player.Draw(spriteBatch);
             spriteBatch.End();
+
+            uiSpriteBatch.Begin();
+                jetpackFuelBar.Draw(uiSpriteBatch);
+            uiSpriteBatch.End();
 
             base.Draw(gameTime);
         }

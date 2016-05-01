@@ -14,18 +14,18 @@ namespace JetpackMan
 {
     class Player
     {
-        const float WalkingSpeed = 1.5f;
-        const float JumpSpeed = 5f;
-        const float GravityAccel = 0.25f;
-        const float JetpackAccel = 0.30f;
-        const int MaxJetpackFuelFrames = 90;
+        public const float WalkingSpeed = 1.5f;
+        public const float JumpSpeed = 5f;
+        public const float GravityAccel = 0.25f;
+        public const float JetpackAccel = 0.30f;
+        public const int MaxJetpackFuelFrames = 90;
 
         public Vector2 position;
         public Vector2 velocity;
         public Texture2D texture;
         public bool onGround;
 
-        private int JetpackFuelCtr = MaxJetpackFuelFrames;
+        public int JetpackFuelCtr { get; private set; } = MaxJetpackFuelFrames;
 
         public Player(Vector2 position)
         {

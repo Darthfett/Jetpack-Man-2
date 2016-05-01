@@ -41,6 +41,7 @@
     <Compile Include="Player.cs" />
     <Compile Include="JetpackGame.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="ProgressBar.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
