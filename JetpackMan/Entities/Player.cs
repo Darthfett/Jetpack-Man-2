@@ -12,8 +12,19 @@ using System.Threading.Tasks;
 
 namespace JetpackMan
 {
+    enum FacingDirection
+    {
+        Left,
+        Right
+    }
+
     class Player : IDrawable, IEntity
     {
+        const Keys MoveLeftKey = Keys.A;
+        const Keys MoveRightKey = Keys.D;
+        const Keys JumpKey = Keys.Space;
+        const Keys JetpackKey = Keys.W;
+
         const float WalkingSpeed = 1.5f;
         const float JumpSpeed = 5f;
         const float GravityAccel = 0.25f;
@@ -24,6 +35,7 @@ namespace JetpackMan
         public Vector2 velocity;
         Texture2D texture;
         public bool onGround;
+        public FacingDirection facingDirection
 
         public int JetpackFuelCtr { get; private set; } = MaxJetpackFuelFrames;
 
@@ -42,6 +54,7 @@ namespace JetpackMan
             this.texture = texture;
             this.velocity = new Vector2(0, 0);
             this.onGround = false;
+            this.facingDirection = FacingDirection.Right;
         }
 
         public bool IsDestroyed()
@@ -112,19 +125,27 @@ namespace JetpackMan
         public void Update(TiledMap map)
         {
             // Left
-            if (Keyboard.GetState().IsKeyDown(Keys.A))
+            if (Keyboard.GetState().IsKeyDown(MoveLeftKey))
             {
                 position.X -= WalkingSpeed;
+                if (!Keyboard.GetState().IsKeyDown(MoveRightKey))
+                {
+                    facingDirection = FacingDirection.Left;
+                }
             }
 
             // Right
-            if (Keyboard.GetState().IsKeyDown(Keys.D))
+            if (Keyboard.GetState().IsKeyDown(MoveRightKey))
             {
                 position.X += WalkingSpeed;
+                if (!Keyboard.GetState().IsKeyDown(MoveLeftKey))
+                {
+                    facingDirection = FacingDirection.Right;
+                }
             }
 
             // Jump
-            if (Keyboard.GetState().IsKeyDown(Keys.Space))
+            if (Keyboard.GetState().IsKeyDown(JumpKey))
             {
                 
                 if (onGround)
@@ -135,7 +156,7 @@ namespace JetpackMan
             }
 
             // Jetpack
-            if (Keyboard.GetState().IsKeyDown(Keys.W))
+            if (Keyboard.GetState().IsKeyDown(JetpackKey))
             {
                 onGround = false;
                 if (JetpackFuelCtr <= 0)
