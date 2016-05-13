@@ -1,4 +1,5 @@
-﻿using MonoGame.Extended.Maps.Tiled;
+﻿using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended.Maps.Tiled;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,5 +12,6 @@ namespace JetpackMan
     {
         bool IsDestroyed();
         void Update(TiledMap map);
+        void Draw(SpriteBatch spriteBatch);
     }
 }

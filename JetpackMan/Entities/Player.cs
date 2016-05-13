@@ -18,26 +18,31 @@ namespace JetpackMan
         Right
     }
 
-    class Player : IDrawable, IEntity
+    class Player : IEntity
     {
         const Keys MoveLeftKey = Keys.A;
         const Keys MoveRightKey = Keys.D;
         const Keys JumpKey = Keys.Space;
         const Keys JetpackKey = Keys.W;
+        const Keys FireKey = Keys.J;
 
         const float WalkingSpeed = 1.5f;
         const float JumpSpeed = 5f;
         const float GravityAccel = 0.25f;
         const float JetpackAccel = 0.30f;
+        const float BulletSpeed = 8f;
+        const int BulletFireRate = 8;
         public const int MaxJetpackFuelFrames = 90;
 
         public Vector2 position;
         public Vector2 velocity;
         Texture2D texture;
+        Texture2D bulletTexture;
         public bool onGround;
-        public FacingDirection facingDirection
+        public FacingDirection facingDirection;
 
-        public int JetpackFuelCtr { get; private set; } = MaxJetpackFuelFrames;
+        int bulletFireCounter = 0;
+        public int jetpackFuelCtr { get; private set; } = MaxJetpackFuelFrames;
 
         public RectangleF BoundingRect
         {
@@ -48,13 +53,14 @@ namespace JetpackMan
             }
         }
 
-        public Player(Vector2 position, Texture2D texture)
+        public Player(Vector2 position, Texture2D texture, Texture2D bulletTexture)
         {
             this.position = position;
             this.texture = texture;
             this.velocity = new Vector2(0, 0);
             this.onGround = false;
             this.facingDirection = FacingDirection.Right;
+            this.bulletTexture = bulletTexture;
         }
 
         public bool IsDestroyed()
@@ -159,28 +165,49 @@ namespace JetpackMan
             if (Keyboard.GetState().IsKeyDown(JetpackKey))
             {
                 onGround = false;
-                if (JetpackFuelCtr <= 0)
+                if (jetpackFuelCtr <= 0)
                 {
                     velocity.Y -= (GravityAccel / 2f);
-                    JetpackFuelCtr = 0;
+                    jetpackFuelCtr = 0;
                 }
                 else
                 {
                     velocity.Y -= JetpackAccel;
-                    JetpackFuelCtr -= 1;
+                    jetpackFuelCtr -= 1;
                 }
             }
             else
             {
-                if (JetpackFuelCtr >= MaxJetpackFuelFrames)
+                if (jetpackFuelCtr >= MaxJetpackFuelFrames)
                 {
-                    JetpackFuelCtr = MaxJetpackFuelFrames;
+                    jetpackFuelCtr = MaxJetpackFuelFrames;
                 }
                 else
                 {
-                    JetpackFuelCtr += 1;
+                    jetpackFuelCtr += 1;
                 }
             }
+
+            if (bulletFireCounter > 0)
+            {
+                bulletFireCounter--;
+            }
+
+            // Fire
+            if (Keyboard.GetState().IsKeyDown(FireKey) && bulletFireCounter == 0)
+            {
+                var vel = new Vector2(-BulletSpeed, 0);
+                var pos = new Vector2(BoundingRect.Left - bulletTexture.Width, BoundingRect.Center.Y);
+                if (facingDirection == FacingDirection.Right)
+                {
+                    vel.X = BulletSpeed;
+                    pos.X = BoundingRect.Right;
+                }
+                EntityManager.AddEntity(new Projectile(pos, vel, bulletTexture));
+                bulletFireCounter = BulletFireRate;
+            }
+
+
 
             // Gravity
             velocity.Y += GravityAccel;

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace JetpackMan
 {
-    class Projectile : IDrawable, IEntity
+    class Projectile : IEntity
     {
         public Vector2 position;
         public Vector2 velocity;
@@ -32,6 +32,7 @@ namespace JetpackMan
             this.velocity = velocity;
             this.texture = texture;
             this.destroyed = false;
+
         }
 
         public bool IsDestroyed()
@@ -54,13 +55,14 @@ namespace JetpackMan
 
             var mapBounds = new RectangleF(0, 0, map.WidthInPixels, map.HeightInPixels);
 
-            if (!mapBounds.Intersects(BoundingRect))
-            {
-                destroyed = true;
-            }
-
             if (!destroyed)
             {
+
+                if (!mapBounds.Contains(BoundingRect))
+                {
+                    destroyed = true;
+                    Console.WriteLine("Destroyed");
+                }
                 // Check for collision using collision layer
                 TiledTileLayer layer = (TiledTileLayer)map.GetLayer("Collision");
                 foreach (var tile in layer.Tiles)

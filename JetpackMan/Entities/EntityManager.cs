@@ -1,4 +1,5 @@
-﻿using MonoGame.Extended.Maps.Tiled;
+﻿using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended.Maps.Tiled;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -24,9 +25,19 @@ namespace JetpackMan
         {
             entities.RemoveAll(item => item.IsDestroyed());
 
-            foreach (var entity in entities)
+            for(var i = 0; i < entities.Count; i++)
             {
-                entity.Update(map);
+                entities[i].Update(map);
+            }
+
+            Console.WriteLine("Count: {0}", entities.Count);
+        }
+
+        public static void Draw(SpriteBatch spriteBatch)
+        {
+            foreach(var entity in entities)
+            {
+                entity.Draw(spriteBatch);
             }
         }
     }

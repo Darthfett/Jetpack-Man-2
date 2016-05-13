@@ -17,7 +17,7 @@ namespace JetpackMan
         TopToBottom
     };
 
-    class ProgressBar : IDrawable
+    class ProgressBar
     {
         public Rectangle rectangle;
         public Color bgColor;

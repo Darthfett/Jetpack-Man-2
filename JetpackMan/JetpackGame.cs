@@ -58,7 +58,7 @@ namespace JetpackMan
 
             map = Content.Load<TiledMap>("Tilesets\\testmap");
 
-            player = new Player(new Vector2(256, map.HeightInPixels), Content.Load<Texture2D>("Graphics\\player"));
+            player = new Player(new Vector2(256, map.HeightInPixels), Content.Load<Texture2D>("Graphics\\player"), Content.Load<Texture2D>("Graphics\\bullet"));
             EntityManager.AddEntity(player);
 
             camera.ZoomIn(2f);
@@ -75,9 +75,7 @@ namespace JetpackMan
 
         void UpdateEntities()
         {
-
-            player.Update(map);
-
+            EntityManager.Update(map);
         }
 
         void UpdateCamera()
@@ -107,7 +105,7 @@ namespace JetpackMan
 
         void UpdateUI()
         {
-            jetpackFuelBar.progress = ((float)player.JetpackFuelCtr) / Player.MaxJetpackFuelFrames;
+            jetpackFuelBar.progress = ((float)player.jetpackFuelCtr) / Player.MaxJetpackFuelFrames;
         }
 
         protected override void Update(GameTime gameTime)
@@ -133,7 +131,7 @@ namespace JetpackMan
 
             spriteBatch.Begin(transformMatrix: camera.GetViewMatrix(), samplerState: SamplerState.PointClamp);
                 map.Draw(spriteBatch);
-                player.Draw(spriteBatch);
+                EntityManager.Draw(spriteBatch);
             spriteBatch.End();
 
             uiSpriteBatch.Begin();
