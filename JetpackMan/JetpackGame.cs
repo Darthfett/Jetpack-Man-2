@@ -22,6 +22,7 @@ namespace JetpackMan
         RectangleF cameraTarget;
         
         ProgressBar jetpackFuelBar;
+        ProgressBar healthBar;
 
         public JetpackGame()
         {
@@ -39,6 +40,7 @@ namespace JetpackMan
         {
 
             jetpackFuelBar = new ProgressBar(new Rectangle(WindowWidth - 100, 20, 80, 12), Color.DarkOliveGreen, Color.Gold, ProgressBarFillDirection.LeftToRight);
+            healthBar = new ProgressBar(new Rectangle(20, 20, 80, 12), Color.Gray, Color.Red, ProgressBarFillDirection.LeftToRight);
 
             graphics.PreferredBackBufferWidth = WindowWidth;
             graphics.PreferredBackBufferHeight = WindowHeight;
@@ -106,6 +108,7 @@ namespace JetpackMan
         void UpdateUI()
         {
             jetpackFuelBar.progress = ((float)player.jetpackFuelCtr) / Player.MaxJetpackFuelFrames;
+            healthBar.progress = ((float)player.health) / Player.MaxHealth;
         }
 
         protected override void Update(GameTime gameTime)
@@ -136,6 +139,7 @@ namespace JetpackMan
 
             uiSpriteBatch.Begin();
                 jetpackFuelBar.Draw(uiSpriteBatch);
+                healthBar.Draw(uiSpriteBatch);
             uiSpriteBatch.End();
 
             base.Draw(gameTime);

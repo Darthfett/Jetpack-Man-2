@@ -33,6 +33,8 @@ namespace JetpackMan
         const float BulletSpeed = 8f;
         const int BulletFireRate = 8;
         public const int MaxJetpackFuelFrames = 90;
+        public const int MaxHealth = 10;
+        const int InvulnerabilityFrames = 90;
 
         public Vector2 position;
         public Vector2 velocity;
@@ -40,9 +42,11 @@ namespace JetpackMan
         Texture2D bulletTexture;
         public bool onGround;
         public FacingDirection facingDirection;
+        public int health;
 
         int bulletFireCounter = 0;
         public int jetpackFuelCtr { get; private set; } = MaxJetpackFuelFrames;
+        public int invulnerableCtr { get; private set; } = 0;
 
         public RectangleF BoundingRect
         {
@@ -61,6 +65,7 @@ namespace JetpackMan
             this.onGround = false;
             this.facingDirection = FacingDirection.Right;
             this.bulletTexture = bulletTexture;
+            this.health = MaxHealth;
         }
 
         public bool IsDestroyed()
@@ -101,10 +106,61 @@ namespace JetpackMan
                 velocity.X = 0;
             }
 
+            if (invulnerableCtr == 0)
+            {
+                Vector2[] corners = {
+                    new Vector2(BoundingRect.Top / 32, BoundingRect.Left / 32),
+                    new Vector2(BoundingRect.Top / 32, BoundingRect.Right / 32),
+                    new Vector2(BoundingRect.Bottom / 32, BoundingRect.Left / 32),
+                    new Vector2(BoundingRect.Bottom / 32, BoundingRect.Right / 32)
+                };
+
+
+                foreach (var corner in corners)
+                {
+                    foreach (var layer in map.Layers)
+                    {
+                        var tile = ((TiledTileLayer)layer).GetTile((int)Math.Round(corner.X), (int)Math.Round(corner.Y));
+                        if (tile == null) continue;
+                        var region = map.GetTileRegion(tile.Id);
+                        if (region == null) continue;
+                        
+                        switch (region.Texture.Name)
+                        {
+                            case "Tilesets/brambles":
+                                if (region.X < 133 && region.Y == 1)
+                                {
+                                    health--;
+                                    invulnerableCtr = InvulnerabilityFrames;
+
+                                    goto checkCollision;
+                                }
+                                break;
+                            case "Tilesets/cacti":
+                                if (region.X < 166 && region.Y == 1)
+                                {
+                                    health--;
+                                    invulnerableCtr = InvulnerabilityFrames;
+
+                                    goto checkCollision;
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                invulnerableCtr--;
+            }
+
+            checkCollision:
 
             // Check for collision using collision layer
-            TiledTileLayer layer = (TiledTileLayer) map.GetLayer("Collision");
-            foreach (var tile in layer.Tiles)
+            TiledTileLayer collisionLayer = (TiledTileLayer) map.GetLayer("Collision");
+            foreach (var tile in collisionLayer.Tiles)
             {
                 if (
                     ((tile.X * 32) > BoundingRect.Right) ||
